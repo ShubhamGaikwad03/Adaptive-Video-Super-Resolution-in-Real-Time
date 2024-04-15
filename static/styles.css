@@ -1,89 +1,120 @@
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
+/* General reset for padding and margin */
+* {
     padding: 0;
-    color: #333;
+    margin: 0;
+    box-sizing: border-box;
 }
 
+/* Use a system font stack for better performance and readability */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* Center content and apply consistent max-width */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Consistent and readable headings */
 h1 {
     text-align: center;
-    margin-top: 30px;
-    color: #444;
+    margin-top: 20px;
+    font-size: 2rem;
 }
 
+/* Informative text style */
 p {
     text-align: center;
-    margin-bottom: 30px;
+    margin: 10px 0 20px;
     color: #666;
 }
 
+/* Controls layout */
 .controls {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
     margin-bottom: 20px;
 }
 
+.control-group {
+    display: flex;
+    align-items: center;
+}
+
+/* Style buttons for better visual hierarchy */
 button {
-    padding: 10px 20px;
+    background-color: #0056b3;
+    color: white;
     border: none;
+    padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
-    background-color: #007BFF;
-    color: #ffffff;
-    transition: background-color 0.3s;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #003d82;
 }
 
 button:disabled {
-    background-color: #ccc;
+    background-color: #cccccc;
     cursor: not-allowed;
 }
 
-label {
-    color: #555;
-}
-
+/* Input field style */
 input[type="text"] {
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    outline: none;
-    margin: 10px 0;
+    margin-right: 10px;
+    font-size: 1rem;
+    flex-grow: 1; /* Allows input to fill the space */
 }
 
-.container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    padding: 20px;
-}
-
+/* Video containers for local and remote streams */
 .media-wrapper {
     border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-video, img {
-    display: block;
-    max-width: 100%;
-    border-radius: 10px;
-    margin-bottom: 10px;
+.media-wrapper video {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
 }
 
+/* Responsive design for smaller screens */
+@media screen and (max-width: 768px) {
+    .controls, .control-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    input[type="text"] {
+        margin: 10px 0;
+    }
+}
+
+/* Label styling for clarity */
 label {
-    font-weight: bold;
-    color: #555;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Add bottom margin to buttons for spacing on mobile view */
+button {
+    margin-bottom: 10px;
 }

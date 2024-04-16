@@ -26,6 +26,24 @@ p {
     margin-bottom: 20px;
 }
 
+.top-buttons, .bottom-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.call-input {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* If you want the input to not stretch too wide, you can restrict its max-width */
+.call-input input {
+    width: 100%; /* This makes input to take the full width of its parent */
+    max-width: 300px; /* Example max-width */
+}
+
 button {
     padding: 10px 20px;
     border: none;

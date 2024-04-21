@@ -10,8 +10,51 @@
 </head>
 
 <body>
+
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function () {
+            emailjs.init("qzDY1LQ_WS1fFmtIR"); // Replace 'your_user_id_here' with the actual user ID from your EmailJS account.
+        })();
+
+
+        function sendEmail() {
+            const email = document.getElementById('emailInput').value.trim();
+            const callId = document.getElementById('callInput').value;
+
+            if (!email || !callId) {
+                alert('Please enter both an email address and a call ID.');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            const templateParams = {
+                user_email: email,
+                call_id: callId
+            };
+
+            emailjs.send('service_70zl44p', 'callID_243304u', templateParams)
+                .then(function (response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    alert('Email sent successfully!');
+                    document.getElementById('emailInput').value = '';
+                }, function (error) {
+                    console.log('FAILED...', error);
+                    alert('Failed to send email: ' + JSON.stringify(error));
+                });
+        }
+
+        function validateEmail(email) {
+            const re = /\S+@\S+\.\S+/;
+            return re.test(String(email).toLowerCase());
+        }
+    </script>
+
     <h1>Video Conferencing</h1>
-    <p>Please provide permission when prompted to access your camera and microphone. This will ensure the best video conferencing experience.</p>
 
     <div class="controls">
         <div class="top-buttons">
@@ -25,32 +68,36 @@
             <button id="answerButton" onclick="answerClick()">Answer</button>
             <button id="hangUpButton" onclick="hangUpClick()">Hangup</button>
         </div>
+        <div>
+            <input type="email" placeholder="Enter Email Address here" id="emailInput">
+            <button id="sendButton" onclick="sendEmail();">Send Email</button>
+        </div>
     </div>
 
     <div class="container">
         <div class="media-wrapper">
-            <label>Local Stream</label>
-            <video id="video" width="1280" height="720" autoplay playsinline></video>
+            <label for="video">Local Stream</label>
+            <video id="video" autoplay playsinline></video>
         </div>
         <div class="media-wrapper">
-            <label>Remote Stream</label>
-            <video id="remoteVideo" width="1280" height="720" autoplay playsinline></video>
+            <label for="remoteVideo">Remote Stream</label>
+            <video id="remoteVideo" autoplay playsinline></video>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js';
         import {
-        addDoc,
-        collection,
-        doc,
-        getDoc,
-        getFirestore,
-        onSnapshot,
-        setDoc,
-        updateDoc
+            addDoc,
+            collection,
+            doc,
+            getDoc,
+            getFirestore,
+            onSnapshot,
+            setDoc,
+            updateDoc
         } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js';
-    
+
         const firebaseConfig = {
             apiKey: "AIzaSyD_F2QU9kOyUxt83o7ntZiWNVkyFdJDjbM",
             authDomain: "webrtc-video-conferencin-a2abe.firebaseapp.com",
@@ -67,7 +114,7 @@
         const servers = {
             iceServers: [
                 {
-                urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
+                    urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
                 },
             ],
             iceCandidatePoolSize: 10,
@@ -86,7 +133,7 @@
         const answerButton = document.getElementById('answerButton');
         const remoteVideo = document.getElementById('remoteVideo');
         const hangupButton = document.getElementById('hangUpButton');
-        
+
         const socket = io.connect('http://127.0.0.1:5000');
 
         // Setting constraints for 360p resolution
@@ -121,7 +168,7 @@
             onSnapshot(callDoc, (snapshot) => {
                 const data = snapshot.data();
                 if (data?.callEnded) {
-                hangupCall();
+                    hangupCall();
                 }
             });
         }
@@ -147,10 +194,10 @@
             await updateDoc(callDoc, { answer });
             onSnapshot(collection(callDoc, 'offerCandidates'), (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    let data = change.doc.data();
-                    peerConnection.addIceCandidate(new RTCIceCandidate(data));
-                }
+                    if (change.type === 'added') {
+                        let data = change.doc.data();
+                        peerConnection.addIceCandidate(new RTCIceCandidate(data));
+                    }
                 });
             });
         }
@@ -193,7 +240,7 @@
 
                 peerConnection.onicecandidate = event => {
                     if (event.candidate) {
-                        socket.emit('message', {'ice': event.candidate});
+                        socket.emit('message', { 'ice': event.candidate });
                     }
                 };
 
@@ -243,16 +290,16 @@
             onSnapshot(doc(firestore, 'calls', callDoc.id), (snapshot) => {
                 const data = snapshot.data();
                 if (!peerConnection.currentRemoteDescription && data?.answer) {
-                const answerDescription = new RTCSessionDescription(data.answer);
-                peerConnection.setRemoteDescription(answerDescription);
+                    const answerDescription = new RTCSessionDescription(data.answer);
+                    peerConnection.setRemoteDescription(answerDescription);
                 }
             });
             onSnapshot(collection(doc(firestore, 'calls', callDoc.id), 'answerCandidates'), (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    const candidate = new RTCIceCandidate(change.doc.data());
-                    peerConnection.addIceCandidate(candidate);
-                }
+                    if (change.type === 'added') {
+                        const candidate = new RTCIceCandidate(change.doc.data());
+                        peerConnection.addIceCandidate(candidate);
+                    }
                 });
             });
 
@@ -274,11 +321,11 @@
             }, 50);  // Sending frames every 10ms. Adjust as needed.
         }
 
-        socket.on('frame_response', function(data) {
+        socket.on('frame_response', function (data) {
             remoteVideo.src = data.image;
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             document.querySelector("[onclick='init();']").addEventListener("click", init);
             document.querySelector("[onclick='initiateConnection();']").addEventListener("click", initiateConnection);
             document.getElementById("answerButton").addEventListener("click", answerClick);
@@ -291,6 +338,8 @@
 
 
     </script>
+
+
 </body>
 
 </html>
